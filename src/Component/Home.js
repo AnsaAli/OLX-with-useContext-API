@@ -1,20 +1,22 @@
-import React from 'react'
+import React from 'react';
 import Header from './Header';
 import MenuNavBar from './MenuNavBar';
 import Advertisment from './Advertisment';
 import Recommentation from './Recommentation';
-import Sell from './Sell';
+import NewlyAdded from './NewlyAdded';
 
- const Home = () => {
+
+const Home = () => {
   return (
     <>
-    {/* <Header/>
-    <MenuNavBar/>
-    <Advertisment/>
-    <Recommentation/> */}
-    <Sell/>
+      <Header/>
+      <MenuNavBar/>
+      <Advertisment/>
+      <NewlyAdded/>
+      <Recommentation/>
+    
     </>
-  )
+  );
 }
 
 export default Home;

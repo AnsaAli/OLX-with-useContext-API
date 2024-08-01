@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { Link } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const Sell = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
 
+  useEffect(() => {
+    console.log("inside sell");
+  }, []);
   const handleCategory = (category) => {
     console.log("handlecategory");
     setSelectedCategory(category);
@@ -17,7 +20,7 @@ const Sell = () => {
         <>
           <ul className="border border-black-100 ">
             <li className="text-black no-underline ml-96 -mt-[393px] cursor-pointer p-3 pl-4 bg-gray-200  w-full">
-                <Link to="/cars" className="text-black no-underline">
+              <Link to="/cars" className="text-black no-underline">
                 Cars
               </Link>
             </li>
@@ -38,9 +41,11 @@ const Sell = () => {
           <table className="ml-0 w-full ">
             <tbody>
               <tr className="border-b ">
-                <td className="p-3 hover:bg-gray-200 cursor-pointer flex justify-between items-center" onClick={() => handleCategory("Cars")} >
-                  Cars{" "}
-                  <NavigateNextIcon  />{" "}
+                <td
+                  className="p-3 hover:bg-gray-200 cursor-pointer flex justify-between items-center"
+                  onClick={() => handleCategory("Cars")}
+                >
+                  Cars <NavigateNextIcon />{" "}
                 </td>
               </tr>
               <tr className="border-b">

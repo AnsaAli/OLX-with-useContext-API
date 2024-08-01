@@ -1,27 +1,78 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { logo_url } from "../Utilility/Constants";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DataValidation from "../Utilility/DataValidation";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { auth, db } from "../Utilility/Firebase";
+import { collection, addDoc } from "firebase/firestore";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true); // to set sign up and sign in
-  const [errorMessage, SetErrorMessage] = useState(null); //to show the error messages;
+  const [errorMessage, setErrorMessage] = useState(null); //to show the error messages;
 
   //to get user input emal and password
   const email = useRef(null);
   const password = useRef(null);
   const name = useRef(null);
+  const navigate = useNavigate();
 
   //to do the actions of login/signup
   const handleButton = () => {
-
     //when user input  data
     // console.log('email',email.current.value);
     // console.log('password',password.current.value);
-    const message = DataValidation(email.current.value,password.current.value );
-    SetErrorMessage(message);
+    const message = DataValidation(email.current.value, password.current.value);
+    setErrorMessage(message);
 
-    if(message) return;
+    if (message) return;
+
+    if (!isSignInForm) {
+      // Sign Up
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          const user = userCredential.user;
+          updateProfile(user, { displayName: name.current.value })
+            .then(() => {
+              addDoc(collection(db, "users"), {
+                id: user.uid,
+                name: name.current.value,
+              }).then(() => {
+                navigate("/home");
+              });
+            })
+            .catch((error) => {
+              setErrorMessage(error.message);
+            });
+        })
+        .catch((error) => {
+          setErrorMessage(error.message);
+        });
+    } else {
+      // Sign In
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          navigate("/home"); // Redirect to the home page
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + " -" + errorMessage); // Display the error message
+        });
+    }
   };
 
   //to show the login/signup button according to the user need.
@@ -40,11 +91,11 @@ const Login = () => {
         </div>
 
         <div>
-          <form 
-          className="flex flex-col items-center"
-          onSubmit={(e)=> e.preventDefault()}
+          <form
+            className="flex flex-col items-center"
+            onSubmit={(e) => e.preventDefault()}
           >
-           <p className="text-red-600"> {errorMessage}</p>
+            <p className="text-red-600"> {errorMessage}</p>
             {!isSignInForm && (
               <input
                 type="text"
