@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import { db } from "../Utilility/Firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { Link } from "react-router-dom";
+import {useAuth} from '../Utilility/AuthContext';
 
 const NewlyAdded = () => {
   const [products, setProducts] = useState([]);
+  const {currentUser} = useAuth();
+  console.log('currentUser in newl',currentUser)
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -20,7 +23,7 @@ const NewlyAdded = () => {
           id: doc.id,
           ...doc.data(),
         }));
-        console.log(productsDatas);
+        // console.log(productsDatas);
         setProducts(productsDatas);
       } catch (error) {
         console.error("Error fetching the products.", error);
@@ -34,7 +37,9 @@ const NewlyAdded = () => {
       <h1 className="text-2xl mt-20 mb-5 font-bold">Newly Added</h1>
       <div className="flex items-center">
         <div className="card_container bg-white grid grid-cols-4 gap-4">
+        {currentUser ? currentUser.displayName : " "}
           {products.map((product) => (
+            
             <Link key={product.id} to={`/showProduct/${product.id}`}>
               <div className="bg-white border border-gray-50 shadow-md p-5">
                 <div className="card-image">
@@ -59,3 +64,6 @@ const NewlyAdded = () => {
 };
 
 export default NewlyAdded;
+
+
+

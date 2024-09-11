@@ -9,7 +9,7 @@ import NewlyAdded from './NewlyAdded';
 const Home = () => {
   return (
     <>
-      <Header/>
+      <Header />
       <MenuNavBar/>
       <Advertisment/>
       <NewlyAdded/>

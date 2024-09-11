@@ -39,6 +39,7 @@ const Login = () => {
       )
         .then((userCredential) => {
           const user = userCredential.user;
+         
           updateProfile(user, { displayName: name.current.value })
             .then(() => {
               addDoc(collection(db, "users"), {

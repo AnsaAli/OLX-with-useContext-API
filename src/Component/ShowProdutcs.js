@@ -7,15 +7,30 @@ const ShowProducts = () => {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchProductAndUser = async () => {
       try {
         const productRef = doc(db, "products", productId);
         const productSnap = await getDoc(productRef);
 
         if (productSnap.exists()) {
-          setProduct(productSnap.data());
+            //to ftech products
+          const productData = productSnap.data();
+          console.log('productData: ',productData)
+          setProduct(productData);
+
+          //to fetch corresponidng user data
+          const userref =   doc(db, "users",productData.userId);
+          console.log('User Ref:', userref.path);
+          const userSnap = await getDoc(userref);
+          if(userSnap.exists()){
+            setUser(userSnap.data());
+          }else{
+            console.log("No user found")
+          }
+
         } else {
           console.log("There is no such product!");
         }
@@ -25,7 +40,7 @@ const ShowProducts = () => {
         setLoading(false);
       }
     };
-    fetchProduct();
+    fetchProductAndUser();
   }, [productId]);
 
   if (loading) {
@@ -38,27 +53,58 @@ const ShowProducts = () => {
 
   return (
     <div className="pt-10">
-        <div className="flex justify-center items-center h-screen mt-10 pb-10">
-      <div className="border shadow-2xl w-1/2  flex flex-col justify-center items-center">
-     
-        <div className="mt-20 w-full text-center justify-center flex h-64">
-          <img src={product.imageUrl} alt="productImage" className="bg-black shadow-inner" />
-        </div>
-        <div className="flex w-full p-4">
-          <div className="flex-1 p-9">
-            <h3 className="text-black font-bold text-2xl m-5">{product.brand} ({product.year}) </h3>
-          
-            {/* <h4>Year: {product.year}</h4> */}
-            <p>No: of owners: <span className="text-black font-bold text-xl">{product.numberOfOwners}</span></p>
-           <h4 className="text-black font-bold mt-5 mb-2">Description</h4>
-            <p>{product.description}</p>
+      <div className="flex justify-center items-center h-screen mt-10 pb-10">
+        <div className="border shadow-2xl w-1/2  flex flex-col justify-center items-center">
+          <div className="mt-20 w-full text-center justify-center flex h-64">
+            <img
+              src={product.imageUrl}
+              alt="productImage"
+              className="bg-black shadow-inner"
+            />
           </div>
-          <div className="flex-1 text-black ml-5 p-9 mt-10">
-            <p className="text-xl font-bold">Price: INR <span className="text-3xl font-bold">{product.price}</span>  </p>
+          <h3 className="text-black font-bold text-2xl mt-5 mb-5">
+                {product.brand} ({product.year}){" "}
+              </h3>
+          <div className="flex w-full p-4 ">
+            
+            <div className="flex-1 p-9 border shadow-sm ml-8 ">
+              {/* <h3 className="text-black font-bold text-xl mt-5 mb-5">
+                {product.brand} ({product.year}){" "}
+              </h3> */}
+
+              {/* <h4>Year: {product.year}</h4> */}
+              <p>
+                No: of owners:{" "}
+                <span className="text-black font-bold text-xl">
+                  {product.numberOfOwners}
+                </span>
+              </p>
+              <h4 className="text-black font-bold mt-5 mb-2">Description</h4>
+              <p>{product.description}</p>
+            </div>
+            <div className="flex-1 text-black ml-5 p-9 mt-10 ">
+              <div className="border shadow-sm p-5">
+                <p className="text font-bold">
+                  Price: INR{" "}
+                  <span className="text-3xl font-bold">{product.price}/-</span>{" "}
+                </p>
+              </div>
+              <div className="border shadow-sm mt-10 p-5">
+                <p>Contact Details:</p>
+                {user ? (
+                  <div>
+                    <p>Name: {user.name}</p>
+                    <p>Email: {user.email}</p>
+                  
+                  </div>
+                ) : (
+                  <p>Contact details not available</p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };

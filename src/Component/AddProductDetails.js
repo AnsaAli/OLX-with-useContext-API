@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useReducer, useRef, useState } from "react";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
 import { storage, db } from "../Utilility/Firebase"; 
@@ -21,6 +21,7 @@ const AddProductDetails = () => {
   const [imageUrl, setImageUrl] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
+  
 
   const handleImageUpload = (file) => {
     if (file) {

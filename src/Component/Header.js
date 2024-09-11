@@ -131,7 +131,9 @@ const Header = () => {
               className="text-l font-bold text-decoration-line: underline"
               to="/logout"
             >
-              Sign Out
+              Sign Out <br></br>
+              {currentUser.displayName
+              }
             </Link>
             </span>
           ) : (
